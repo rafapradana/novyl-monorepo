@@ -1,5 +1,36 @@
 Novyl AI - UI/UX & Flow Document
 
+mvp scope:
+
+  fitur yang ADA di MVP:
+    - auth: register, login, foto profil (upload/ganti/hapus)
+    - change password (di halaman profile, input password lama + baru)
+    - dashboard: daftar semua project novel
+    - wizard 5 step: input dasar novel, karakter, latar, bab, konfirmasi
+    - novel editor: rich text editor (Tiptap), sidebar bab, panel referensi
+    - auto-save di editor
+    - CRUD: project novel, bab, karakter, latar
+    - CRUD: gambar karakter, gambar latar, cover novel (upload/ganti/hapus)
+    - export novel: PDF, EPUB, DOCX
+    - preview novel (tampilan buku)
+    - storage: MinIO dengan presigned URL
+    - design system: indigo primary, neutral, helper colors
+
+  fitur yang TIDAK ADA di MVP:
+    - AI generation (tidak ada OpenRouter, tidak ada auto-write)
+    - lupa password / forgot password
+    - email service (tidak ada Resend, tidak ada email apapun)
+    - draft server-side (wizard data hilang jika refresh/keluar)
+    - collaborative editing
+    - real-time sync
+
+  fitur input yang tetap ADA (masuk DB tapi tidak dipakai untuk generation):
+    - premis, genre, sinopsis
+    - karakter + deskripsi
+    - latar + deskripsi
+    - judul + outline per bab
+    - semua data ini tersimpan di database dan bisa diedit kapan saja
+
 design philosophy:
 - feel: premium, calm, focused — seperti studio penulisan pribadi
 - bukan tool yang ramai, bukan dashboard yang penuh grafik
