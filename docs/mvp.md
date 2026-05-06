@@ -72,7 +72,7 @@ novel editor (halaman utama setelah wizard):
   - outline bab saat ini (sebagai referensi saat menulis)
   - daftar karakter (sebagai referensi)
   - daftar latar (sebagai referensi)
-  - notes / catatan bebas user
+  - notes / catatan bebas per bab (auto-save)
 - navigasi antar bab: prev/next chapter buttons
 - status per bab: draft, in-progress, completed (user set manual)
 - export per bab atau seluruh novel: PDF, EPUB, DOCX
@@ -82,6 +82,7 @@ fitur lain:
 - CRUD bab (create, read, update, delete, reorder)
 - CRUD karakter (create, read, update, delete) — bisa diakses kapan saja
 - CRUD latar/setting (create, read, update, delete) — bisa diakses kapan saja
+- CRUD catatan per bab (create, read, update, delete)
 - CRUD gambar karakter (character image) — upload, ganti, hapus
 - CRUD gambar latar/setting (setting image) — upload, ganti, hapus
 - CRUD cover novel — upload, ganti, hapus
