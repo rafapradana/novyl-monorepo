@@ -2,14 +2,18 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, PanelRightOpen, PanelRightClose } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { EditorTopbar } from "@/components/editor/editor-topbar";
 import { ChapterSidebar } from "@/components/editor/chapter-sidebar";
+import { NovelEditor } from "@/components/editor/novel-editor";
+import { ReferencePanel } from "@/components/editor/reference-panel";
 import { useEditorStore } from "@/stores/editor-store";
 import { useAutoSave } from "@/hooks/use-auto-save";
 import { novelService } from "@/services/novel.service";
 import { chapterService } from "@/services/chapter.service";
-import { Chapter, ChapterStatus } from "@/types/novel";
+import { characterService } from "@/services/character.service";
+import { settingService } from "@/services/setting.service";
+import { Chapter, ChapterStatus, Character, Setting } from "@/types/novel";
 import { toast } from "sonner";
 
 export default function EditorPage() {
@@ -35,13 +39,17 @@ export default function EditorPage() {
   const { debouncedSave } = useAutoSave(3000);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [settings, setSettings] = useState<Setting[]>([]);
 
   // Load novel + chapters
   useEffect(() => {
     async function load() {
-      const [novelRes, chaptersRes] = await Promise.all([
+      const [novelRes, chaptersRes, charsRes, settingsRes] = await Promise.all([
         novelService.get(novelId),
         chapterService.list(novelId),
+        characterService.list(novelId),
+        settingService.list(novelId),
       ]);
 
       if (!novelRes.success || !novelRes.data) {
@@ -61,6 +69,14 @@ export default function EditorPage() {
         }
       }
 
+      if (charsRes.success && charsRes.data) {
+        setCharacters(charsRes.data);
+      }
+
+      if (settingsRes.success && settingsRes.data) {
+        setSettings(settingsRes.data);
+      }
+
       setLoading(false);
     }
     load();
@@ -74,19 +90,6 @@ export default function EditorPage() {
       setContent(ch?.content || "");
     },
     [chapters, setActiveChapter]
-  );
-
-  // Handle content change
-  const handleContentChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newContent = e.target.value;
-      setContent(newContent);
-      if (activeChapterId) {
-        updateChapterLocal(activeChapterId, { content: newContent });
-        debouncedSave(activeChapterId, newContent);
-      }
-    },
-    [activeChapterId, updateChapterLocal, debouncedSave]
   );
 
   // Handle add chapter
@@ -183,39 +186,40 @@ export default function EditorPage() {
         <main className="flex flex-1 flex-col overflow-hidden">
           {/* Editor Content */}
           <div className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-[720px] px-8 py-12">
-              {/* Chapter Title */}
-              {activeChapter && (
-                <div className="mb-6">
-                  <input
-                    type="text"
-                    value={activeChapter.title}
-                    onChange={(e) =>
-                      handleUpdateChapter(activeChapter.id, {
-                        title: e.target.value,
-                      })
+            {activeChapterId ? (
+              <div className="mx-auto max-w-[720px] px-8">
+                {/* Chapter Title */}
+                {activeChapter && (
+                  <div className="pt-8">
+                    <input
+                      type="text"
+                      value={activeChapter.title}
+                      onChange={(e) =>
+                        handleUpdateChapter(activeChapter.id, {
+                          title: e.target.value,
+                        })
+                      }
+                      placeholder="Judul bab..."
+                      className="w-full border-none bg-transparent text-2xl font-bold text-gray-900 outline-none placeholder:text-gray-300"
+                    />
+                  </div>
+                )}
+                <NovelEditor
+                  content={content}
+                  onChange={(text) => {
+                    setContent(text);
+                    if (activeChapterId) {
+                      updateChapterLocal(activeChapterId, { content: text });
+                      debouncedSave(activeChapterId, text);
                     }
-                    placeholder="Judul bab..."
-                    className="w-full border-none bg-transparent text-2xl font-bold text-gray-900 outline-none placeholder:text-gray-300"
-                  />
-                </div>
-              )}
-
-              {/* Textarea Editor */}
-              {activeChapterId ? (
-                <textarea
-                  value={content}
-                  onChange={handleContentChange}
-                  placeholder="Mulai menulis bab ini..."
-                  className="min-h-[60vh] w-full resize-none border-none bg-transparent font-serif text-[17px] leading-[1.8] text-gray-800 outline-none placeholder:text-gray-300"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  }}
                 />
-              ) : (
-                <div className="flex min-h-[40vh] items-center justify-center text-gray-400">
-                  <p>Pilih bab dari sidebar untuk mulai menulis</p>
-                </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex min-h-[40vh] items-center justify-center text-gray-400">
+                <p>Pilih bab dari sidebar untuk mulai menulis</p>
+              </div>
+            )}
           </div>
 
           {/* Bottom Bar */}
@@ -244,19 +248,13 @@ export default function EditorPage() {
           )}
         </main>
 
-        {/* Reference Panel (placeholder for Phase 3.10) */}
+        {/* Reference Panel */}
         {panelOpen && !fullscreen && (
-          <aside className="hidden w-[280px] border-l border-gray-200 bg-white lg:block">
-            <div className="p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Referensi
-              </h3>
-              <p className="mt-2 text-xs text-gray-400">
-                Panel referensi (outline, karakter, latar, catatan) akan tersedia
-                di fase berikutnya.
-              </p>
-            </div>
-          </aside>
+          <ReferencePanel
+            activeChapter={activeChapter || null}
+            characters={characters}
+            settings={settings}
+          />
         )}
       </div>
     </div>
