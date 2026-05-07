@@ -24,6 +24,7 @@ import {
 import { useEditorStore, SaveStatus } from "@/stores/editor-store";
 import { useAuthStore } from "@/stores/auth-store";
 import { exportService } from "@/services/export.service";
+import { authService } from "@/services/auth.service";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu as ProfileMenu,
@@ -62,6 +63,7 @@ export function EditorTopbar() {
   const toggleFullscreen = useEditorStore((s) => s.toggleFullscreen);
 
   const user = useAuthStore((s) => s.user);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const [exporting, setExporting] = useState(false);
 
@@ -72,7 +74,10 @@ export function EditorTopbar() {
     .toUpperCase()
     .slice(0, 2) || "U";
 
-  function handleLogout() {
+  async function handleLogout() {
+    if (refreshToken) {
+      await authService.logout(refreshToken);
+    }
     clearAuth();
     router.push("/login");
   }

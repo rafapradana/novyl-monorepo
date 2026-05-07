@@ -85,6 +85,7 @@ export interface UpdateNovelInput {
   genre?: string;
   synopsis?: string;
   blurb?: string;
+  cover_path?: string | null;
 }
 
 export interface CreateChapterInput {

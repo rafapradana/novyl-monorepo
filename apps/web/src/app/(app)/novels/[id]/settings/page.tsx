@@ -259,11 +259,11 @@ export default function NovelSettingsPage() {
               novel_id: novelId,
             }}
             onUploaded={async (objectKey) => {
-              await novelService.update(novelId, { cover_path: objectKey } as any);
+              await novelService.update(novelId, { cover_path: objectKey });
               toast.success("Cover berhasil diupdate");
             }}
             onDeleted={async () => {
-              await novelService.update(novelId, { cover_path: null } as any);
+              await novelService.update(novelId, { cover_path: null });
               toast.success("Cover berhasil dihapus");
             }}
           />

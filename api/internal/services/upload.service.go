@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"time"
 
@@ -134,6 +135,7 @@ func DeleteFile(objectKey string, cfg *config.Config) error {
 	// Delete from MinIO
 	if err := utils.DeleteFile(context.Background(), cfg.MinIOBucket, objectKey); err != nil {
 		// Log error but continue to delete DB record
+		fmt.Printf("Warning: failed to delete file from MinIO: %v\n", err)
 	}
 
 	// Delete from database

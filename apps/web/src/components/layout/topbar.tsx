@@ -11,13 +11,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/stores/auth-store";
+import { authService } from "@/services/auth.service";
 
 export function Topbar() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearAuth = useAuthStore((s) => s.clearAuth);
 
-  function handleLogout() {
+  async function handleLogout() {
+    if (refreshToken) {
+      await authService.logout(refreshToken);
+    }
     clearAuth();
     router.push("/login");
   }

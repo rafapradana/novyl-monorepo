@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, MoreVertical, Settings, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Novel, NovelStatus } from "@/types/novel";
+import { uploadService } from "@/services/upload.service";
 
 interface NovelCardProps {
   novel: Novel;
@@ -64,6 +66,15 @@ function timeAgo(dateStr: string): string {
 
 export function NovelCard({ novel, onDelete }: NovelCardProps) {
   const router = useRouter();
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (novel.cover_path) {
+      uploadService.getDownloadUrl(novel.cover_path).then((res) => {
+        if (res.success && res.data) setCoverUrl(res.data.url);
+      });
+    }
+  }, [novel.cover_path]);
 
   return (
     <div
@@ -72,8 +83,12 @@ export function NovelCard({ novel, onDelete }: NovelCardProps) {
     >
       {/* Cover */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100">
-        {novel.cover_path ? (
-          <div className="h-full w-full bg-gray-200" />
+        {coverUrl ? (
+          <img
+            src={coverUrl}
+            alt={novel.title}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <BookOpen className="h-12 w-12 text-gray-300" />

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/google/uuid"
@@ -67,9 +68,11 @@ func CreateChapter(novelID uuid.UUID, input CreateChapterInput) (*models.Chapter
 	}
 
 	// Update novel status ke in_progress jika masih draft
-	novel, _ := repositories.FindNovelByID(novelID)
-	if novel != nil && novel.Status == models.NovelStatusDraft {
-		_ = repositories.UpdateNovelStatus(novelID, models.NovelStatusInProgess)
+	novel, err := repositories.FindNovelByID(novelID)
+	if err == nil && novel.Status == models.NovelStatusDraft {
+		if err := repositories.UpdateNovelStatus(novelID, models.NovelStatusInProgess); err != nil {
+			fmt.Printf("Warning: failed to update novel status: %v\n", err)
+		}
 	}
 
 	return chapter, nil

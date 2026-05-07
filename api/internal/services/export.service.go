@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/go-shiori/go-epub"
 	"github.com/google/uuid"
@@ -89,10 +90,12 @@ func ExportNovel(novelID, userID uuid.UUID, input ExportInput, cfg *config.Confi
 		FilePath: objectKey,
 		FileSize: &fileSize,
 	}
-	_ = repositories.CreateNovelExport(export)
+	if err := repositories.CreateNovelExport(export); err != nil {
+		fmt.Printf("Warning: failed to save export record: %v\n", err)
+	}
 
 	// Generate download URL
-	downloadURL, err := utils.PresignedGetURL(context.Background(), cfg.MinIOBucket, objectKey, 60*60)
+	downloadURL, err := utils.PresignedGetURL(context.Background(), cfg.MinIOBucket, objectKey, 60*time.Minute)
 	if err != nil {
 		return nil, fmt.Errorf("gagal membuat download URL: %w", err)
 	}

@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Upload, X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFileUpload, UploadStatus } from "@/hooks/use-file-upload";
-import { PresignUploadInput } from "@/services/upload.service";
+import { PresignUploadInput, uploadService } from "@/services/upload.service";
 
 interface FileUploadProps {
   label?: string;
@@ -78,6 +78,23 @@ export function FileUpload({
   const displayUrl = previewUrl || currentUrl;
   const shapeClass = previewShape === "circle" ? "rounded-full" : "rounded-lg";
 
+  // Fetch presigned URL for existing images
+  const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (displayUrl && !previewUrl && !displayUrl.startsWith("blob:")) {
+      // It's an object key — fetch presigned URL
+      uploadService.getDownloadUrl(displayUrl).then((res) => {
+        if (res.success && res.data) {
+          setResolvedUrl(res.data.url);
+        }
+      });
+    } else if (previewUrl) {
+      setResolvedUrl(previewUrl);
+    } else {
+      setResolvedUrl(null);
+    }
+  }, [displayUrl, previewUrl]);
+
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -97,7 +114,13 @@ export function FileUpload({
           className={`relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 ${shapeClass} cursor-pointer transition-colors hover:border-indigo-300`}
           onClick={() => !isUploading && inputRef.current?.click()}
         >
-          {displayUrl ? (
+          {resolvedUrl ? (
+            <img
+              src={resolvedUrl}
+              alt="Preview"
+              className={`h-full w-full object-cover ${shapeClass}`}
+            />
+          ) : displayUrl ? (
             <div className={`h-full w-full bg-gray-200 ${shapeClass}`} />
           ) : (
             <Upload className="h-8 w-8 text-gray-300" />

@@ -23,13 +23,13 @@ export function NovelEditor({ content, onChange }: NovelEditorProps) {
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getText());
+      onChange(editor.getHTML());
     },
   });
 
   // Sync content from outside (e.g., chapter switch)
   useEffect(() => {
-    if (editor && content !== editor.getText()) {
+    if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content);
     }
   }, [content, editor]);

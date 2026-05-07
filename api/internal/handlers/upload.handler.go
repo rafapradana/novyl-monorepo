@@ -62,10 +62,10 @@ func (h *UploadHandler) ConfirmUpload(c *fiber.Ctx) error {
 	return utils.SuccessWithMessage(c, fiber.StatusCreated, "File berhasil diupload", asset)
 }
 
-// GET /v1/upload/url/:key
+// GET /v1/upload/url/*
 // Generate presigned download URL for a file.
 func (h *UploadHandler) GetDownloadURL(c *fiber.Ctx) error {
-	objectKey := c.Params("key")
+	objectKey := c.Params("*")
 	if objectKey == "" {
 		return utils.BadRequest(c, "Object key required")
 	}
@@ -78,9 +78,9 @@ func (h *UploadHandler) GetDownloadURL(c *fiber.Ctx) error {
 	return utils.Success(c, fiber.StatusOK, result)
 }
 
-// DELETE /v1/upload/:key
+// DELETE /v1/upload/*
 func (h *UploadHandler) DeleteFile(c *fiber.Ctx) error {
-	objectKey := c.Params("key")
+	objectKey := c.Params("*")
 	if objectKey == "" {
 		return utils.BadRequest(c, "Object key required")
 	}

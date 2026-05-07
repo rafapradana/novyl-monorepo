@@ -76,8 +76,8 @@ func Setup(app *fiber.App, cfg *config.Config) {
 	upload := handlers.NewUploadHandler(cfg)
 	protected.Post("/upload/presign", upload.PresignUpload)
 	protected.Post("/upload/confirm", upload.ConfirmUpload)
-	protected.Get("/upload/url/:key", upload.GetDownloadURL)
-	protected.Delete("/upload/:key", upload.DeleteFile)
+	protected.Get("/upload/url/*", upload.GetDownloadURL)
+	protected.Delete("/upload/*", upload.DeleteFile)
 
 	// Export routes
 	export := handlers.NewExportHandler(cfg)

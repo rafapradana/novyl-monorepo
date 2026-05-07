@@ -32,8 +32,6 @@ export default function EditorPage() {
     setChapters,
     setActiveChapter,
     updateChapterLocal,
-    toggleSidebar,
-    togglePanel,
   } = useEditorStore();
 
   const { debouncedSave } = useAutoSave(3000);
@@ -149,9 +147,10 @@ export default function EditorPage() {
     [chapters, activeChapterId, setChapters, setActiveChapter]
   );
 
-  // Word count
-  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
-  const charCount = content.length;
+  // Word count (strip HTML tags first)
+  const plainText = content.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  const wordCount = plainText ? plainText.split(/\s+/).length : 0;
+  const charCount = plainText.length;
 
   // Active chapter
   const activeChapter = chapters.find((c) => c.id === activeChapterId);

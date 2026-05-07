@@ -13,6 +13,7 @@ import {
 import { novelService } from "@/services/novel.service";
 import { chapterService } from "@/services/chapter.service";
 import { exportService } from "@/services/export.service";
+import { uploadService } from "@/services/upload.service";
 import { Novel, Chapter } from "@/types/novel";
 import { toast } from "sonner";
 
@@ -25,6 +26,7 @@ export default function PreviewPage() {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -32,7 +34,13 @@ export default function PreviewPage() {
         novelService.get(novelId),
         chapterService.list(novelId),
       ]);
-      if (novelRes.success && novelRes.data) setNovel(novelRes.data);
+      if (novelRes.success && novelRes.data) {
+        setNovel(novelRes.data);
+        if (novelRes.data.cover_path) {
+          const urlRes = await uploadService.getDownloadUrl(novelRes.data.cover_path);
+          if (urlRes.success && urlRes.data) setCoverUrl(urlRes.data.url);
+        }
+      }
       if (chaptersRes.success && chaptersRes.data)
         setChapters(chaptersRes.data);
       setLoading(false);
@@ -118,8 +126,12 @@ export default function PreviewPage() {
         {/* Cover */}
         <div className="mb-12 flex flex-col items-center text-center">
           <div className="mb-6 flex h-64 w-48 items-center justify-center rounded-lg bg-gray-200 shadow-md">
-            {novel.cover_path ? (
-              <div className="h-full w-full rounded-lg bg-gray-300" />
+            {coverUrl ? (
+              <img
+                src={coverUrl}
+                alt={novel.title}
+                className="h-full w-full rounded-lg object-cover"
+              />
             ) : (
               <BookOpen className="h-16 w-16 text-gray-400" />
             )}
