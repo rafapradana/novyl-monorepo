@@ -71,4 +71,11 @@ func Setup(app *fiber.App, cfg *config.Config) {
 	protected.Get("/chapters/:chapterId/notes", note.Get)
 	protected.Put("/chapters/:chapterId/notes", note.Upsert)
 	protected.Delete("/chapters/:chapterId/notes", note.Delete)
+
+	// Upload routes
+	upload := handlers.NewUploadHandler(cfg)
+	protected.Post("/upload/presign", upload.PresignUpload)
+	protected.Post("/upload/confirm", upload.ConfirmUpload)
+	protected.Get("/upload/url/:key", upload.GetDownloadURL)
+	protected.Delete("/upload/:key", upload.DeleteFile)
 }

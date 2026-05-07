@@ -4,12 +4,14 @@ export interface WizardCharacter {
   id: string;
   name: string;
   description: string;
+  image_path?: string;
 }
 
 export interface WizardSetting {
   id: string;
   name: string;
   description: string;
+  image_path?: string;
 }
 
 export interface WizardChapter {

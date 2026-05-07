@@ -10,6 +10,7 @@ import (
 	"github.com/novyl/novyl/internal/database"
 	"github.com/novyl/novyl/internal/middleware"
 	"github.com/novyl/novyl/internal/routes"
+	"github.com/novyl/novyl/internal/utils"
 )
 
 func main() {
@@ -23,6 +24,9 @@ func main() {
 	// Connect to database and run migrations
 	database.Connect(cfg)
 	database.Migrate()
+
+	// Initialize MinIO
+	utils.InitMinIO(cfg)
 
 	app := fiber.New(fiber.Config{
 		AppName:      "Novyl API",

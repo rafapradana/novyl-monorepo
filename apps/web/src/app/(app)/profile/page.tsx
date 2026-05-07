@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Camera, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/shared/file-upload";
 import { useAuthStore } from "@/stores/auth-store";
 import { authService } from "@/services/auth.service";
 import { toast } from "sonner";
@@ -116,22 +117,38 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Avatar */}
-          <div className="flex flex-col items-center gap-3">
-            <div className="group relative h-24 w-24 cursor-pointer overflow-hidden rounded-full bg-indigo-100">
-              {user?.avatar_path ? (
-                <div className="h-full w-full bg-gray-200" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-indigo-600">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                <Camera className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <span className="text-sm text-gray-400">
-              Foto profil (coming soon)
-            </span>
+          <div className="flex flex-col items-center">
+            <FileUpload
+              label="Foto Profil"
+              description="JPG, PNG, atau WebP. Maks 2MB."
+              currentUrl={user?.avatar_path}
+              previewShape="circle"
+              meta={{
+                file_type: "profile_photo",
+                entity_type: "user",
+                entity_id: user?.id,
+              }}
+              onUploaded={async (objectKey) => {
+                const result = await authService.updateProfile({
+                  name: name.trim(),
+                  avatar_path: objectKey,
+                });
+                if (result.success && result.data) {
+                  updateUser(result.data);
+                  toast.success("Foto profil berhasil diupdate");
+                }
+              }}
+              onDeleted={async () => {
+                const result = await authService.updateProfile({
+                  name: name.trim(),
+                  avatar_path: null,
+                });
+                if (result.success && result.data) {
+                  updateUser(result.data);
+                  toast.success("Foto profil berhasil dihapus");
+                }
+              }}
+            />
           </div>
 
           {/* Name */}

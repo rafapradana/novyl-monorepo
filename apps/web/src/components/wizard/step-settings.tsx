@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
+import { FileUpload } from "@/components/shared/file-upload";
 import { WizardSetting } from "@/stores/wizard-store";
 
 interface StepSettingsProps {
@@ -34,6 +35,7 @@ export function StepSettings({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [imagePath, setImagePath] = useState<string | undefined>(undefined);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [deleteTarget, setDeleteTarget] = useState<WizardSetting | null>(null);
 
@@ -41,6 +43,7 @@ export function StepSettings({
     setEditingId(null);
     setName("");
     setDescription("");
+    setImagePath(undefined);
     setErrors({});
     setDialogOpen(true);
   }
@@ -49,6 +52,7 @@ export function StepSettings({
     setEditingId(setting.id);
     setName(setting.name);
     setDescription(setting.description);
+    setImagePath(setting.image_path);
     setErrors({});
     setDialogOpen(true);
   }
@@ -68,12 +72,13 @@ export function StepSettings({
     if (!validate()) return;
 
     if (editingId) {
-      onUpdate(editingId, { name: name.trim(), description: description.trim() });
+      onUpdate(editingId, { name: name.trim(), description: description.trim(), image_path: imagePath });
     } else {
       onAdd({
         id: crypto.randomUUID(),
         name: name.trim(),
         description: description.trim(),
+        image_path: imagePath,
       });
     }
     setDialogOpen(false);
@@ -147,6 +152,19 @@ export function StepSettings({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="flex justify-center">
+              <FileUpload
+                previewShape="rectangle"
+                description="Gambar latar"
+                currentUrl={imagePath}
+                meta={{
+                  file_type: "setting_image",
+                  entity_type: "setting",
+                }}
+                onUploaded={(key) => setImagePath(key)}
+                onDeleted={() => setImagePath(undefined)}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="setting-name">Nama Latar</Label>
               <Input
