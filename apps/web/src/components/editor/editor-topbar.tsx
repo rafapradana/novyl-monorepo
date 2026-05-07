@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -11,6 +12,7 @@ import {
   Maximize,
   Minimize,
   RefreshCw,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEditorStore, SaveStatus } from "@/stores/editor-store";
 import { useAuthStore } from "@/stores/auth-store";
+import { exportService } from "@/services/export.service";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu as ProfileMenu,
@@ -29,6 +32,7 @@ import {
   DropdownMenuTrigger as ProfileTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
+import { toast } from "sonner";
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   switch (status) {
@@ -59,6 +63,7 @@ export function EditorTopbar() {
 
   const user = useAuthStore((s) => s.user);
   const clearAuth = useAuthStore((s) => s.clearAuth);
+  const [exporting, setExporting] = useState(false);
 
   const initials = user?.name
     ?.split(" ")
@@ -70,6 +75,27 @@ export function EditorTopbar() {
   function handleLogout() {
     clearAuth();
     router.push("/login");
+  }
+
+  async function handleExport(format: "pdf" | "epub" | "docx") {
+    if (!novel?.id || exporting) return;
+    setExporting(true);
+    const result = await exportService.exportNovel(novel.id, format);
+    setExporting(false);
+
+    if (!result.success || !result.data) {
+      toast.error(result.error || "Gagal export novel");
+      return;
+    }
+
+    // Trigger download
+    const link = document.createElement("a");
+    link.href = result.data.download_url;
+    link.download = `${novel.title}.${format}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(`Novel berhasil di-export sebagai ${format.toUpperCase()}`);
   }
 
   return (
@@ -105,12 +131,22 @@ export function EditorTopbar() {
 
         <DropdownMenu>
           <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded hover:bg-gray-100">
-            <Download className="h-4 w-4" />
+            {exporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>PDF</DropdownMenuItem>
-            <DropdownMenuItem>EPUB</DropdownMenuItem>
-            <DropdownMenuItem>DOCX</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport("pdf")} disabled={exporting}>
+              PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport("epub")} disabled={exporting}>
+              EPUB
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleExport("docx")} disabled={exporting}>
+              DOCX
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

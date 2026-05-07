@@ -89,3 +89,8 @@ func FileExtension(filename string) string {
 	}
 	return ""
 }
+
+// MinioPutOptions returns empty PutObjectOptions for MinIO uploads.
+func MinioPutOptions() minio.PutObjectOptions {
+	return minio.PutObjectOptions{}
+}

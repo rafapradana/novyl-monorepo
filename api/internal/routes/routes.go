@@ -78,4 +78,8 @@ func Setup(app *fiber.App, cfg *config.Config) {
 	protected.Post("/upload/confirm", upload.ConfirmUpload)
 	protected.Get("/upload/url/:key", upload.GetDownloadURL)
 	protected.Delete("/upload/:key", upload.DeleteFile)
+
+	// Export routes
+	export := handlers.NewExportHandler(cfg)
+	protected.Post("/novels/:id/export", export.Export)
 }
