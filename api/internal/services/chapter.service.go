@@ -70,7 +70,7 @@ func CreateChapter(novelID uuid.UUID, input CreateChapterInput) (*models.Chapter
 	// Update novel status ke in_progress jika masih draft
 	novel, err := repositories.FindNovelByID(novelID)
 	if err == nil && novel.Status == models.NovelStatusDraft {
-		if err := repositories.UpdateNovelStatus(novelID, models.NovelStatusInProgess); err != nil {
+		if err := repositories.UpdateNovelStatus(novelID, models.NovelStatusInProgress); err != nil {
 			fmt.Printf("Warning: failed to update novel status: %v\n", err)
 		}
 	}

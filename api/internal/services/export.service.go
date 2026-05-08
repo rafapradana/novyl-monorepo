@@ -169,11 +169,15 @@ func generateEPUB(novel *models.Novel, chapters []models.Chapter) ([]byte, error
 	for _, ch := range chapters {
 		content := ""
 		if ch.Content != nil {
-			content = strings.ReplaceAll(*ch.Content, "\n", "<br/><br/>")
+			// Content is HTML from Tiptap, use as-is but escape for XML safety
+			content = *ch.Content
 		}
-		html := fmt.Sprintf("<h1>%s</h1><p>%s</p>", ch.Title, content)
+		chTitle := escapeXML(ch.Title)
+		html := fmt.Sprintf("<h1>%s</h1>%s", chTitle, content)
 		_, _ = e.AddSection(html, ch.Title, "", "")
 	}
+
+	e.SetLang("id")
 
 	var buf bytes.Buffer
 	_, err = e.WriteTo(&buf)

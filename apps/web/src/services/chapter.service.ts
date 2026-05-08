@@ -1,6 +1,7 @@
 import { api } from "@/lib/api-client";
 import {
   Chapter,
+  ChapterStatus,
   CreateChapterInput,
   UpdateChapterInput,
   UpdateChapterContentInput,
@@ -36,7 +37,7 @@ export const chapterService = {
 
   async updateStatus(
     id: string,
-    status: string
+    status: ChapterStatus
   ): Promise<APIResponse<Chapter>> {
     return api.patch<Chapter>(`/chapters/${id}/status`, { status });
   },

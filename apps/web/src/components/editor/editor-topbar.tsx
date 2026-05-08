@@ -13,6 +13,8 @@ import {
   Minimize,
   RefreshCw,
   Loader2,
+  LogOut,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,18 +23,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useEditorStore, SaveStatus } from "@/stores/editor-store";
 import { useAuthStore } from "@/stores/auth-store";
 import { exportService } from "@/services/export.service";
 import { authService } from "@/services/auth.service";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu as ProfileMenu,
-  DropdownMenuContent as ProfileContent,
-  DropdownMenuItem as ProfileItem,
-  DropdownMenuTrigger as ProfileTrigger,
-} from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
@@ -192,25 +187,25 @@ export function EditorTopbar() {
 
         <div className="ml-1 h-4 w-px bg-gray-200" />
 
-        <ProfileMenu>
-          <ProfileTrigger className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100">
+        <DropdownMenu>
+          <DropdownMenuTrigger className="ml-1 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100">
             <Avatar className="h-7 w-7">
               <AvatarFallback className="bg-indigo-100 text-[10px] font-semibold text-indigo-600">
                 {initials}
               </AvatarFallback>
             </Avatar>
-          </ProfileTrigger>
-          <ProfileContent align="end" className="w-40">
-            <ProfileItem onClick={() => router.push("/profile")}>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
               <User className="mr-2 h-3.5 w-3.5" />
               Profil
-            </ProfileItem>
-            <ProfileItem onClick={handleLogout} className="text-red-600">
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600">
               <LogOut className="mr-2 h-3.5 w-3.5" />
               Keluar
-            </ProfileItem>
-          </ProfileContent>
-        </ProfileMenu>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

@@ -177,11 +177,12 @@ export default function PreviewPage() {
               {ch.title || `Bab ${i + 1}`}
             </h2>
             <div
-              className="whitespace-pre-wrap font-serif text-[17px] leading-[1.8] text-gray-800"
+              className="prose prose-lg max-w-none font-serif text-gray-800"
               style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-            >
-              {ch.content || "(Bab ini belum memiliki isi)"}
-            </div>
+              dangerouslySetInnerHTML={{
+                __html: ch.content || "<p>(Bab ini belum memiliki isi)</p>",
+              }}
+            />
           </article>
         ))}
 

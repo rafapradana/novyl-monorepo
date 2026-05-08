@@ -93,7 +93,12 @@ export default function ProfilePage() {
     setConfirmPassword("");
   }
 
-  function handleLogout() {
+  const refreshToken = useAuthStore((s) => s.refreshToken);
+
+  async function handleLogout() {
+    if (refreshToken) {
+      await authService.logout(refreshToken);
+    }
     clearAuth();
     router.push("/login");
   }

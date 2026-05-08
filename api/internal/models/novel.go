@@ -11,7 +11,7 @@ type NovelStatus string
 
 const (
 	NovelStatusDraft     NovelStatus = "draft"
-	NovelStatusInProgess NovelStatus = "in_progress"
+	NovelStatusInProgress NovelStatus = "in_progress"
 	NovelStatusCompleted NovelStatus = "completed"
 	NovelStatusArchived  NovelStatus = "archived"
 )
