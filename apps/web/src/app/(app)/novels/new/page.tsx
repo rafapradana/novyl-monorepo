@@ -83,6 +83,16 @@ export default function NewNovelPage() {
       await characterService.create(novelId, {
         name: char.name,
         description: char.description,
+        image_path: char.image_path,
+      });
+    }
+
+    // 3. Create settings
+    for (const setting of store.settings) {
+      await settingService.create(novelId, {
+        name: setting.name,
+        description: setting.description,
+        image_path: setting.image_path,
       });
     }
 

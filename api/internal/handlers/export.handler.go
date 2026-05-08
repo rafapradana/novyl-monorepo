@@ -46,7 +46,7 @@ func (h *ExportHandler) Export(c *fiber.Ctx) error {
 		if err == services.ErrNotOwner {
 			return utils.Forbidden(c, err.Error())
 		}
-		return utils.InternalServerError(c, "Gagal export novel: "+err.Error())
+		return utils.InternalServerError(c, "Gagal export novel")
 	}
 
 	return utils.SuccessWithMessage(c, fiber.StatusOK, "Novel berhasil di-export", result)

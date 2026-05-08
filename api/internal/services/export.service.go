@@ -163,13 +163,12 @@ func generateEPUB(novel *models.Novel, chapters []models.Chapter) ([]byte, error
 	}
 
 	if novel.Genre != nil {
-		e.SetLang(*novel.Genre)
+		_ = novel.Genre // genre available for future metadata use
 	}
 
 	for _, ch := range chapters {
 		content := ""
 		if ch.Content != nil {
-			// Content is HTML from Tiptap, use as-is but escape for XML safety
 			content = *ch.Content
 		}
 		chTitle := escapeXML(ch.Title)
@@ -178,6 +177,7 @@ func generateEPUB(novel *models.Novel, chapters []models.Chapter) ([]byte, error
 	}
 
 	e.SetLang("id")
+	e.SetAuthor("Novyl")
 
 	var buf bytes.Buffer
 	_, err = e.WriteTo(&buf)

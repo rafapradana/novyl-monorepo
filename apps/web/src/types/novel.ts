@@ -110,21 +110,25 @@ export interface ReorderChaptersInput {
 export interface CreateCharacterInput {
   name: string;
   description?: string;
+  image_path?: string;
 }
 
 export interface UpdateCharacterInput {
   name?: string;
   description?: string;
+  image_path?: string;
 }
 
 export interface CreateSettingInput {
   name: string;
   description?: string;
+  image_path?: string;
 }
 
 export interface UpdateSettingInput {
   name?: string;
   description?: string;
+  image_path?: string;
 }
 
 export interface UpdateNoteInput {

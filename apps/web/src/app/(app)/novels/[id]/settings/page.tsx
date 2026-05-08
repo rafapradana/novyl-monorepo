@@ -143,13 +143,13 @@ export default function NovelSettingsPage() {
   async function handleSaveChar() {
     if (!charName.trim()) return;
     if (charEditingId) {
-      const res = await characterService.update(charEditingId, { name: charName.trim(), description: charDesc.trim() });
+      const res = await characterService.update(charEditingId, { name: charName.trim(), description: charDesc.trim(), image_path: charImage });
       if (res.success && res.data) {
         setCharacters((prev) => prev.map((c) => c.id === charEditingId ? res.data! : c));
         toast.success("Karakter diupdate");
       }
     } else {
-      const res = await characterService.create(novelId, { name: charName.trim(), description: charDesc.trim() });
+      const res = await characterService.create(novelId, { name: charName.trim(), description: charDesc.trim(), image_path: charImage });
       if (res.success && res.data) {
         setCharacters((prev) => [...prev, res.data!]);
         toast.success("Karakter ditambahkan");
@@ -188,13 +188,13 @@ export default function NovelSettingsPage() {
   async function handleSaveSetting() {
     if (!settingName.trim()) return;
     if (settingEditingId) {
-      const res = await settingService.update(settingEditingId, { name: settingName.trim(), description: settingDesc.trim() });
+      const res = await settingService.update(settingEditingId, { name: settingName.trim(), description: settingDesc.trim(), image_path: settingImage });
       if (res.success && res.data) {
         setSettings((prev) => prev.map((s) => s.id === settingEditingId ? res.data! : s));
         toast.success("Latar diupdate");
       }
     } else {
-      const res = await settingService.create(novelId, { name: settingName.trim(), description: settingDesc.trim() });
+      const res = await settingService.create(novelId, { name: settingName.trim(), description: settingDesc.trim(), image_path: settingImage });
       if (res.success && res.data) {
         setSettings((prev) => [...prev, res.data!]);
         toast.success("Latar ditambahkan");

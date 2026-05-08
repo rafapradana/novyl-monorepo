@@ -14,12 +14,14 @@ var ErrCharacterNotFound = errors.New("karakter tidak ditemukan")
 type CreateCharacterInput struct {
 	Name        string  `json:"name" validate:"required,max=100"`
 	Description *string `json:"description"`
+	ImagePath   *string `json:"image_path"`
 }
 
 // UpdateCharacterInput adalah input untuk mengupdate karakter.
 type UpdateCharacterInput struct {
 	Name        *string `json:"name"`
 	Description *string `json:"description"`
+	ImagePath   *string `json:"image_path"`
 }
 
 // CreateCharacter membuat karakter baru dalam novel.
@@ -36,6 +38,9 @@ func CreateCharacter(novelID, userID uuid.UUID, input CreateCharacterInput) (*mo
 
 	if input.Description != nil {
 		character.Description = input.Description
+	}
+	if input.ImagePath != nil {
+		character.ImagePath = input.ImagePath
 	}
 
 	if err := repositories.CreateCharacter(character); err != nil {
@@ -71,6 +76,9 @@ func UpdateCharacter(charID, userID uuid.UUID, input UpdateCharacterInput) (*mod
 	}
 	if input.Description != nil {
 		updates["description"] = *input.Description
+	}
+	if input.ImagePath != nil {
+		updates["image_path"] = *input.ImagePath
 	}
 
 	if len(updates) > 0 {
